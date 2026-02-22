@@ -18,8 +18,7 @@ public class ExcelController {
     @Autowired private ExcelService excelService;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) throws Exception {
-        String taskId = UUID.randomUUID().toString();
+    public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file, @RequestParam("taskId") String taskId) throws Exception {
         Path path = fileStorageService.save(file);
         excelService.processExcel(path, taskId);
         return ResponseEntity.ok(taskId);
