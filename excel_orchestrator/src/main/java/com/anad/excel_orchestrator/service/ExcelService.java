@@ -2,6 +2,7 @@ package com.anad.excel_orchestrator.service;
 
 import com.anad.excel_orchestrator.model.Customer;
 import com.anad.excel_orchestrator.repository.CustomerRepository;
+import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -29,15 +30,16 @@ public class ExcelService {
                 Row row = sheet.getRow(i);
                 if (row == null) continue;
 
-                Customer c = new Customer();
-                c.setName(row.getCell(0).getStringCellValue());
-                c.setEmail(row.getCell(1).getStringCellValue());
-                repository.save(c);
+                Customer customer = new Customer();
+
+                customer.setName(row.getCell(1).getStringCellValue());
+
+                customer.setEmail(row.getCell(2).getStringCellValue());
+
+                repository.save(customer);
 
                 int progress = (int) ((double) i / totalRows * 100);
                 messagingTemplate.convertAndSend("/topic/progress/" + taskId, progress);
-
-                Thread.sleep(100); // Slow down so you can see the progress bar move!
             }
             Files.deleteIfExists(filePath); // Clean up
         } catch (Exception e) {
